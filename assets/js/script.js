@@ -33,7 +33,6 @@ var loadTasks = function() {
 
   // loop over object properties
   $.each(tasks, function(list, arr) {
-    console.log(list, arr);
     // then loop over sub-array
     arr.forEach(function(task) {
       createTask(task.text, task.date, list);
@@ -45,7 +44,67 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+$(".list-group").on("click", "p", function() {
+  let text = $(this)
+    .text()
+    .trim();
+  let textInput = $("<textarea>")
+    .addClass("form-control")
+    .val(text);
+  $(this).replaceWith(textInput);
+  textInput.trigger("focus");
+  console.log(text);
+});
 
+$(".list-group").on("blur", "textarea", function() {
+  let text = $(this)
+    .val()
+    .trim();
+  let status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+  let index = $(this)
+    .closest(".list-group-item")
+    .index();
+  tasks[status][index].text = text;
+  saveTasks();
+  let taskP = $("<p>")
+    .addClass("m-1")
+    .text(text);
+  $(this).replaceWith(taskP);
+});
+
+$(".list-group").on("click", "span", function() {
+  let date = $(this)
+    .text()
+    .trim();
+  let dateInput = $("<input>")
+    .attr("type", "text",)
+    .addClass("form-control")
+    .val(date);
+  $(this).replaceWith(dateInput);
+  dateInput.trigger("focus");
+});
+
+$(".list-group").on("blur", "input[type='text']", function() {
+  let date = $(this)
+    .val()
+    .trim();
+  let status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+  let index = $(this)
+    .closest(".list-group-item")
+    .index();
+  tasks[status][index].date = date;
+  saveTasks();
+  let taskSpan = $("<span>")
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
+  $(this).replaceWith(taskSpan);
+});
 
 
 // modal was triggered
