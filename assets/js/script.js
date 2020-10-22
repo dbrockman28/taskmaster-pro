@@ -9,11 +9,10 @@ var createTask = function(taskText, taskDate, taskList) {
   var taskP = $("<p>")
     .addClass("m-1")
     .text(taskText);
-
   // append span and p element to parent li
   taskLi.append(taskSpan, taskP);
-
-
+  // Check due date
+  auditTask(taskLi);
   // append to ul list on the page
   $("#list-" + taskList).append(taskLi);
 };
@@ -110,6 +109,7 @@ $(".list-group").on("change", "input[type='text']", function() {
     .addClass("badge badge-primary badge-pill")
     .text(date);
   $(this).replaceWith(taskSpan);
+  auditTask($(taskSpan).closest(".list-group-item"));
 });
 
 $(".card .list-group").sortable({
@@ -146,6 +146,24 @@ $(".card .list-group").sortable({
     saveTasks();
   }
 });
+
+let auditTask = function(taskEl) {
+  // Get date from task element
+  let date = $(taskEl)
+    .find("span")
+    .text()
+    .trim();
+  // Convert to moment object at 5:00pm
+  let time = moment(date, "L").set("hour", 17);
+  // Remove old classes from element
+  $(taskEl).removeClass("list-group-item-warning list-group-item-danger");
+  // Apply new classes if task is near or overdue
+  if (moment().isAfter(time)) {
+    $(taskEl).addClass("list-group-item-danger");
+  } else if (Math.abs(moment().diff(time, "days")) <= 2) {
+    $(taskEl).addClass("list-group-item-warning");
+  }
+};
 
 $("#trash").droppable({
   accept: ".card .list-group-item",
