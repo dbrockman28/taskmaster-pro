@@ -53,7 +53,6 @@ $(".list-group").on("click", "p", function() {
     .val(text);
   $(this).replaceWith(textInput);
   textInput.trigger("focus");
-  console.log(text);
 });
 
 $(".list-group").on("blur", "textarea", function() {
@@ -84,10 +83,17 @@ $(".list-group").on("click", "span", function() {
     .addClass("form-control")
     .val(date);
   $(this).replaceWith(dateInput);
+  // Enable jquery ui datepicker
+  dateInput.datepicker({
+    minDate: 1,
+    onClose: function() {
+      $(this).trigger("change");
+    }
+  });
   dateInput.trigger("focus");
 });
 
-$(".list-group").on("blur", "input[type='text']", function() {
+$(".list-group").on("change", "input[type='text']", function() {
   let date = $(this)
     .val()
     .trim();
@@ -111,18 +117,6 @@ $(".card .list-group").sortable({
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
-  activate: function(event) {
-    // console.log("activate", this);
-  },
-  deactivate: function(event) {
-    // console.log("deactivate", this);
-  },
-  over: function(event) {
-    // console.log("over", this);
-  },
-  out: function(event) {
-    // console.log("out", this);
-  },
   update: function(event) {
     // Store task data in array
     let tempArr = [];
@@ -159,18 +153,16 @@ $("#trash").droppable({
   drop: function(event, ui) {
     ui.draggable.remove();
   },
-  over: function(event, ui) {
-    console.log("over");
-  },
-  out: function(event, ui) {
-    console.log("out");
-  }
 });
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
   // clear values
   $("#modalTaskDescription, #modalDueDate").val("");
+});
+
+$("#modalDueDate").datepicker({
+  minDate: 1
 });
 
 // modal is fully visible
